@@ -224,6 +224,13 @@ func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileS
 
 		file := c.Param("filepath")
 		// Check if file exists and/or if we have permission to access it
+		if file[len(file)-1:len(file)] != "/" && !strings.Contains(file, ".") {
+			file = file + ".html"
+			c.Request.URL.Path += ".html"
+		}
+		if idx := strings.Index(file, "?"); idx != -1 {
+			file = file[0:idx] + ".html"
+		}
 		f, err := fs.Open(file)
 		if err != nil {
 			c.Writer.WriteHeader(http.StatusNotFound)
